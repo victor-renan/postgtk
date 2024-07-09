@@ -32,3 +32,4 @@ packagecache
 
 *.pyc
 /*venv*
+history.json

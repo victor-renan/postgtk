@@ -9,16 +9,23 @@ struct _MainApp {
 
 G_DEFINE_TYPE(MainApp, main_app, GTK_TYPE_APPLICATION);
 
-static void main_app_init(MainApp *app) {}
+static void main_app_init(MainApp *app)
+{
+}
 
-static void main_app_activate(GApplication *app) {
+static void main_app_activate(GApplication *app)
+{
 	MainWindow *window;
 
     window = main_window_new(MAIN_APP(app));
+
+    main_window_open(window, NULL);
+
 	gtk_window_present(GTK_WINDOW(window));
 }
 
-static void main_app_open(GApplication *app, GFile **files, int n_files, const char *hint) {
+static void main_app_open(GApplication *app, GFile **files, int n_files, const char *hint)
+{
 	GList *windows;
 	MainWindow *window;
 
@@ -29,18 +36,21 @@ static void main_app_open(GApplication *app, GFile **files, int n_files, const c
         window = main_window_new(MAIN_APP(app));
     }
 
-    for (int i = 0; i < n_files; i++) {
-        main_window_open(window, files[i]);
-    }
+    main_window_open(window, files[0]);
 
     gtk_window_present(GTK_WINDOW(window));
 }
 
-static void main_app_class_init(MainAppClass *class) {
+static void main_app_class_init(MainAppClass *class)
+{
     G_APPLICATION_CLASS(class)->activate = main_app_activate;
     G_APPLICATION_CLASS(class)->open = main_app_open;
 }
 
-MainApp *main_app_new(void) {
-    return g_object_new(MAIN_APP_TYPE, "app", "org.postgtk", "flags", G_APPLICATION_HANDLES_OPEN, NULL);
+MainApp *main_app_new(void)
+{
+    return g_object_new(
+        MAIN_APP_TYPE,
+        "application-id", "org.postgtk", "flags",
+        G_APPLICATION_HANDLES_OPEN, NULL);
 }

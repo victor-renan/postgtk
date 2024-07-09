@@ -1,14 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="MainWindow" parent="GtkApplicationWindow">
-    <property name="title">MAIN WINDOW</property>
-    <property name="default-width">600</property>
-    <property name="default-height">400</property>
+    <property name="title">PostGTK</property>
+    <property name="default-width">800</property>
+    <property name="default-height">500</property>
     <child>
-      <object class="GtkBox" id="content_box">
-        <property name="orientation">vertical</property>
+      <object class="GtkPaned" id="reqpaned">
+        <property name="start-child">reqlist</property>
+        <property name="end-child">reqplace</property>
+        <property name="wide-handle">true</property>
+        <property name="position">220</property>
         <child>
-          <object class="GtkStack" id="stack"/>
+          <object class="GtkListBox" id="reqlist" />
+        </child>
+        <child>
+          <object class="GtkBox" id="reqplace">
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">8</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">4</property>
+                <property name="spacing">4</property>
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <child>
+                  <object class="GtkLabel" id="reqplace_label">
+                    <property name="xalign">0</property>
+                    <property name="use-markup">true</property>
+                    <property name="margin-bottom">4</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkEntry">
+                        <property name="hexpand">true</property>
+                        <property name="placeholder-text">Type the URL here</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton">
+                        <property name="label">Submit</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
         </child>
       </object>
     </child>
