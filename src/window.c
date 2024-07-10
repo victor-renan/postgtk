@@ -10,20 +10,6 @@ struct _MainWindow {
     GtkWidget *reqplace_methods;
 };
 
-const int HTTP_METHODS_SIZE = 9;
-
-const char *HTTP_METHODS[] = {
-    "GET",
-    "POST",
-    "PUT",
-    "PATCH",
-    "DELETE",
-    "OPTIONS",
-    "HEAD",
-    "CONNECT",
-    "TRACE",
-};
-
 G_DEFINE_TYPE(MainWindow, main_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static void main_window_init(MainWindow *window)

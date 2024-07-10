@@ -17,24 +17,34 @@
           <object class="GtkBox" id="reqplace">
             <child>
               <object class="GtkBox">
-                <property name="spacing">8</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">4</property>
-                <property name="spacing">4</property>
+                <property name="spacing">8</property>
                 <property name="margin-top">8</property>
                 <property name="margin-bottom">8</property>
                 <property name="margin-start">8</property>
                 <property name="margin-end">8</property>
                 <child>
-                  <object class="GtkLabel" id="reqplace_label">
-                    <property name="xalign">0</property>
-                    <property name="use-markup">true</property>
-                    <property name="margin-bottom">4</property>
-                  </object>
-                </child>
-                <child>
                   <object class="GtkBox">
                     <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkDropDown">
+                        <property name="width-request">108</property>
+                        <property name="model">
+                          <object class="GtkStringList">
+                            <items>
+                              <item>GET</item>
+                              <item>POST</item>
+                              <item>PUT</item>
+                              <item>PATCH</item>
+                              <item>DELETE</item>
+                              <item>OPTIONS</item>
+                              <item>HEAD</item>
+                              <item>CONNECT</item>
+                            </items>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkEntry">
                         <property name="hexpand">true</property>
@@ -44,6 +54,90 @@
                     <child>
                       <object class="GtkButton">
                         <property name="label">Submit</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStackSwitcher" id="reqplace_switcher">
+                    <property name="stack">reqplace_stack</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStack" id="reqplace_stack">
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">body</property>
+                        <property name="title">BODY</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Body</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">headers</property>
+                        <property name="title">HEADERS</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Headers</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStackSwitcher" id="resplace_switcher">
+                    <property name="stack">resplace_stack</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkStack" id="resplace_stack">
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">preview</property>
+                        <property name="title">PREVIEW</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Preview</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">headers</property>
+                        <property name="title">HEADERS</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Headers</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">cookies</property>
+                        <property name="title">COOKIES</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Cookies</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">http</property>
+                        <property name="title">HTTP</property>
+                        <property name="child">
+                          <object class="GtkLabel">
+                            <property name="label">Http</property>
+                          </object>
+                        </property>
                       </object>
                     </child>
                   </object>
