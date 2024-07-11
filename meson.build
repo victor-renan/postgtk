@@ -2,7 +2,7 @@ project('postgtk', 'c')
 
 gnome = import('gnome')
 
-deps = [dependency('gtk4')]
+deps = [dependency('gtk4'), dependency('libcurl')]
 
 resources = gnome.compile_resources('postgtk',
     'data/postgtk.gresource.xml',
