@@ -1,7 +1,10 @@
 #include <gtk/gtk.h>
 
+#include "services/request.h"
+
 #include "app.h"
 #include "window.h"
+
 
 struct _MainWindow {
     GtkApplicationWindow parent;
@@ -20,7 +23,9 @@ struct _MainWindow {
     GtkWidget *resplace_preview;
     GtkWidget *resplace_headers;
     GtkWidget *resplace_cookies;
-    GtkWidget *resplace_http;
+    GtkWidget *resplace_size;
+    GtkWidget *resplace_time;
+    GtkWidget *resplace_status;
 };
 
 G_DEFINE_TYPE(MainWindow, main_window, GTK_TYPE_APPLICATION_WINDOW);
@@ -46,7 +51,9 @@ static void main_window_class_init(MainWindowClass *class)
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_preview);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_headers);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_cookies);
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_http);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_size);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_time);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_status);
 }
 
 MainWindow *main_window_new(MainApp *app)
@@ -83,13 +90,6 @@ GtkTextView *ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content
     return GTK_TEXT_VIEW(textview);
 }
 
-typedef struct Request {
-    guint *method;
-    gchar *url;
-    gchar *body;
-    gchar *headers;
-} Request;
-
 typedef struct RequestForm {
     GtkDropDown *method;
     GtkEntry *url;
@@ -100,15 +100,17 @@ typedef struct RequestForm {
     GtkTextView *res_preview;
     GtkTextView *res_headers;
     GtkTextView *res_cookies;
-    GtkTextView *res_http;
+    GtkLabel *res_size;
+    GtkLabel *res_time;
+    GtkLabel *res_status;
 } RequestForm;
 
 void send_request(GtkWidget *widget, RequestForm *form)
 {
     Request request;
 
-    guint method = (guint) gtk_drop_down_get_selected(form->method);
-    gchar *url = (gchar*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
+    guint method = (uint) gtk_drop_down_get_selected(form->method);
+    gchar *url = (char*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
 
     gtk_widget_set_sensitive(form->res_switcher, TRUE);
     gtk_widget_set_visible(form->res_stack, TRUE);
@@ -117,6 +119,15 @@ void send_request(GtkWidget *widget, RequestForm *form)
     request.url = url;
     request.body = url;
     request.headers = url;
+
+    Response res = req_get(request);
+
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_preview), res.preview, -1);
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_headers), res.headers, -1);
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_cookies), res.cookies, -1);
+    gtk_label_set_text(form->res_size, g_strdup_printf("%ld B", res.size));
+    gtk_label_set_text(form->res_time, g_strdup_printf("%.2f ms", res.time * 100));
+    gtk_label_set_text(form->res_status, g_strdup_printf("%ld", res.status));
 }
 
 void main_window_open(MainWindow *window, GFile *file)
@@ -126,16 +137,20 @@ void main_window_open(MainWindow *window, GFile *file)
     *headers,
     *res_preview,
     *res_headers,
-    *res_cookies,
-    *res_http;
+    *res_cookies;
+
+    GtkLabel *res_size, *res_time, *res_status;
 
     body = ui_add_reqplace_textview(GTK_BOX(window->reqplace_body), TRUE, "{}");
     headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "{}");
 
-    res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, NULL);
-    res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, NULL);
-    res_cookies = ui_add_reqplace_textview(GTK_BOX(window->resplace_cookies), FALSE, NULL);
-    res_http = ui_add_reqplace_textview(GTK_BOX(window->resplace_http), FALSE, NULL);
+    res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, "");
+    res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, "");
+    res_cookies = ui_add_reqplace_textview(GTK_BOX(window->resplace_cookies), FALSE, "");
+
+    res_size = GTK_LABEL(window->resplace_size);
+    res_time = GTK_LABEL(window->resplace_time);
+    res_status = GTK_LABEL(window->resplace_status);
 
     gtk_widget_set_sensitive(window->resplace_switcher, FALSE);
     gtk_widget_set_visible(window->resplace_stack, FALSE);
@@ -144,14 +159,16 @@ void main_window_open(MainWindow *window, GFile *file)
 
     form->method = GTK_DROP_DOWN(window->reqplace_methods);
     form->url = GTK_ENTRY(window->reqplace_url);
-    form->body = body;
-    form->headers = headers;
     form->res_stack = window->resplace_stack;
     form->res_switcher = window->resplace_switcher;
+    form->body = body;
+    form->headers = headers;
     form->res_preview = res_preview;
     form->res_headers = res_headers;
     form->res_cookies = res_cookies;
-    form->res_http = res_http;
+    form->res_size = res_size;
+    form->res_time = res_time;
+    form->res_status = res_status;
 
     g_signal_connect(
         GTK_BUTTON(window->reqplace_submit), "clicked",

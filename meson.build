@@ -11,6 +11,6 @@ resources = gnome.compile_resources('postgtk',
 
 executable(
     meson.project_name(),
-    'src/app.c', 'src/window.c', 'main.c', resources,
+    'src/app.c', 'src/services/request.c', 'src/window.c', 'main.c', resources,
     dependencies: deps,
 )
