@@ -91,6 +91,7 @@ GtkTextView *ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content
 }
 
 typedef struct RequestForm {
+    GtkBox *reqplace;
     GtkDropDown *method;
     GtkEntry *url;
     GtkTextView *body;
@@ -105,9 +106,10 @@ typedef struct RequestForm {
     GtkLabel *res_status;
 } RequestForm;
 
+
 void send_request(GtkWidget *widget, RequestForm *form)
 {
-    Request request;
+    Request req;
 
     guint method = (uint) gtk_drop_down_get_selected(form->method);
     gchar *url = (char*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
@@ -115,19 +117,20 @@ void send_request(GtkWidget *widget, RequestForm *form)
     gtk_widget_set_sensitive(form->res_switcher, TRUE);
     gtk_widget_set_visible(form->res_stack, TRUE);
 
-    request.method = &method;
-    request.url = url;
-    request.body = url;
-    request.headers = url;
+    req.method = &method;
+    req.url = url;
+    req.body = url;
+    req.headers = url;
 
-    Response res = req_get(request);
+    Response res = req_get(req);
 
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_preview), res.preview, -1);
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_headers), res.headers, -1);
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_cookies), res.cookies, -1);
-    gtk_label_set_text(form->res_size, g_strdup_printf("%ld B", res.size));
-    gtk_label_set_text(form->res_time, g_strdup_printf("%.2f ms", res.time * 100));
-    gtk_label_set_text(form->res_status, g_strdup_printf("%ld", res.status));
+
+    gtk_label_set_text(form->res_size, g_strdup_printf("%ldB", res.size));
+    gtk_label_set_text(form->res_time, g_strdup_printf("%.2fms", res.time * 100));
+    gtk_label_set_text(form->res_status, g_strdup_printf("Code %ld", res.status));
 }
 
 void main_window_open(MainWindow *window, GFile *file)
@@ -157,6 +160,7 @@ void main_window_open(MainWindow *window, GFile *file)
 
     RequestForm *form = g_new(RequestForm, 1);
 
+    form->reqplace = GTK_BOX(window->reqplace);
     form->method = GTK_DROP_DOWN(window->reqplace_methods);
     form->url = GTK_ENTRY(window->reqplace_url);
     form->res_stack = window->resplace_stack;

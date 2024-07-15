@@ -35,7 +35,8 @@ Response req_get(Request req) {
         CURLcode errcode = curl_easy_perform(curl);
 
         if (errcode == CURLE_OK) {
-            res.preview = chunk.response;
+            res.preview = malloc(chunk.size);
+            strcpy(res.preview, chunk.response);
             res.headers = "";
             res.cookies = "";
             res.size = chunk.size;
@@ -43,13 +44,14 @@ Response req_get(Request req) {
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res.status);
         } else {
             res.preview = (char*) curl_easy_strerror(errcode);
-            res.headers = res.preview;
-            res.cookies = res.preview;
+            res.headers = "No headers";
+            res.cookies = "No cookies";
             res.size = 0;
-            res.status = 000;
+            res.status = 0;
             res.time = 0;
         }
 
+        free(chunk.response);
         curl_easy_cleanup(curl);
     }
 

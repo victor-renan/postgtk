@@ -2,8 +2,8 @@
 <interface>
   <template class="MainWindow" parent="GtkApplicationWindow">
     <property name="title">PostGTK</property>
-    <property name="default-width">800</property>
-    <property name="default-height">500</property>
+    <property name="default-width">900</property>
+    <property name="default-height">560</property>
     <child>
       <object class="GtkPaned" id="reqpaned">
         <property name="start-child">reqlist</property>
@@ -89,19 +89,19 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="resplace_size">
-                        <property name="label">0 B</property>
+                        <property name="label">0B</property>
                         <property name="hexpand">true</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkLabel" id="resplace_time">
-                        <property name="label">0 ms</property>
+                        <property name="label">0,00ms</property>
                         <property name="hexpand">true</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkLabel" id="resplace_status">
-                        <property name="label">000</property>
+                        <property name="label">Code 0</property>
                         <property name="hexpand">true</property>
                       </object>
                     </child>

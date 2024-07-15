@@ -1,8 +1,10 @@
 #pragma once
 
 #include <curl/curl.h>
+#include <gtk/gtk.h>
 
 typedef struct {
+    GtkBox *reqplace;
     uint *method;
     char *url;
     char *body;
