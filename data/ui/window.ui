@@ -33,7 +33,6 @@
                               <item>DELETE</item>
                               <item>OPTIONS</item>
                               <item>HEAD</item>
-                              <item>CONNECT</item>
                             </items>
                           </object>
                         </property>
@@ -42,6 +41,7 @@
                     <child>
                       <object class="GtkEntry" id="reqplace_url">
                         <property name="hexpand">true</property>
+                        <property name="text">http://localhost:8080/test</property>
                         <property name="placeholder-text">Type the URL here</property>
                       </object>
                     </child>

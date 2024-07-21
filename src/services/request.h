@@ -5,7 +5,7 @@
 
 typedef struct {
     GtkBox *reqplace;
-    uint *method;
+    uint method;
     char *url;
     char *body;
     char *headers;
@@ -25,11 +25,4 @@ typedef struct {
     size_t size;
 } Memory;
 
-Response req_get(Request req);
-Response req_post(Request req);
-Response req_put(Request req);
-Response req_patch(Request req);
-Response req_delete(Request req);
-Response req_options(Request req);
-Response req_head(Request req);
-Response req_connect(Request req);
+Response perform_request(Request req);

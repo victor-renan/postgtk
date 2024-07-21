@@ -106,30 +106,44 @@ typedef struct RequestForm {
     GtkLabel *res_status;
 } RequestForm;
 
-
 void send_request(GtkWidget *widget, RequestForm *form)
 {
-    Request req;
-
-    guint method = (uint) gtk_drop_down_get_selected(form->method);
-    gchar *url = (char*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
-
     gtk_widget_set_sensitive(form->res_switcher, TRUE);
     gtk_widget_set_visible(form->res_stack, TRUE);
 
-    req.method = &method;
-    req.url = url;
-    req.body = url;
-    req.headers = url;
+    Request req;
 
-    Response res = req_get(req);
+    uint method = (uint) gtk_drop_down_get_selected(form->method);
+    char *url = (char*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
+
+    GtkTextBuffer *body_buf, *header_buf;
+    GtkTextIter bl, br, hl, hr;
+
+    body_buf = gtk_text_view_get_buffer(form->body);
+    header_buf = gtk_text_view_get_buffer(form->headers);
+
+    gtk_text_buffer_get_bounds(body_buf, &bl, &br);
+    gtk_text_buffer_get_bounds(header_buf, &hl, &hr);
+
+    char *body = gtk_text_buffer_get_text(body_buf, &bl, &br, FALSE);
+    char *headers = gtk_text_buffer_get_text(header_buf, &hl, &hr, FALSE);
+
+    strcat(body, "\n");
+    strcat(headers, "\n");
+
+    req.method = method;
+    req.url = url;
+    req.body = body;
+    req.headers = headers;
+
+    Response res = perform_request(req);
 
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_preview), res.preview, -1);
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_headers), res.headers, -1);
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(form->res_cookies), res.cookies, -1);
 
     gtk_label_set_text(form->res_size, g_strdup_printf("%ldB", res.size));
-    gtk_label_set_text(form->res_time, g_strdup_printf("%.2fms", res.time * 100));
+    gtk_label_set_text(form->res_time, g_strdup_printf("%.2fms", res.time * 1000));
     gtk_label_set_text(form->res_status, g_strdup_printf("Code %ld", res.status));
 }
 
