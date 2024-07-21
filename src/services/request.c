@@ -146,20 +146,28 @@ char *get_http_client_err(HTTPClientErr *err)
 
 HTTPClientErr *set_user_headers(Request req, CURL *curl)
 {
-    size_t index;
-    json_t *arr, *val;
+    const char *key;
+
+    json_t *obj, *val;
     json_error_t err;
 
-    arr = json_loads(req.headers, 0, &err);
+    obj = json_loads(req.headers, 1, &err);
 
-    if (!arr) { 
+    if (!obj) { 
         return new_http_client_err(ERR_JSON, LOC_REQ_HEADERS, err.text);
     };
 
     struct curl_slist *slist = NULL;
 
-    json_array_foreach(arr, index, val) {
-        slist = curl_slist_append(slist, json_string_value(val));
+    json_object_foreach(obj, key, val) {
+        char *parsed = (char*) json_string_value(val),
+            *org = "%s: %s";
+        if (strcmp(parsed, ";") == 0)
+            org = "%s%s";
+        
+        slist = curl_slist_append(slist, json_string_value(
+            json_sprintf(org, key, parsed)
+        ));
     }
 
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
@@ -223,6 +231,7 @@ Response perform_request(Request req)
 
         curl_easy_setopt(curl, CURLOPT_URL, req.url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_cb);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)&chunk);
 
         err = set_user_headers(req, curl);
@@ -239,7 +248,7 @@ Response perform_request(Request req)
         if (err) return errata(res, curl, err);
 
         res.preview = chunk.response;
-        if (!chunk.response) res.preview = "No body (HEAD)";
+        if (!chunk.response) res.preview = "No body";
         res.headers = write_headers(curl);
         res.cookies = write_cookies(curl);
         res.size = chunk.size;

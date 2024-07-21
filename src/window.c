@@ -158,7 +158,7 @@ void main_window_open(MainWindow *window, GFile *file)
     GtkLabel *res_size, *res_time, *res_status;
 
     body = ui_add_reqplace_textview(GTK_BOX(window->reqplace_body), TRUE, "{}");
-    headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "[]");
+    headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "{}");
 
     res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, "");
     res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, "");
