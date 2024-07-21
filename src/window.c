@@ -79,7 +79,6 @@ GtkTextView *ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content
     gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(textview), 8);
     gtk_text_view_set_monospace(GTK_TEXT_VIEW(textview), TRUE);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), editable);
-
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroller), textview);
 
     gtk_widget_set_hexpand(scroller, TRUE);
@@ -159,7 +158,7 @@ void main_window_open(MainWindow *window, GFile *file)
     GtkLabel *res_size, *res_time, *res_status;
 
     body = ui_add_reqplace_textview(GTK_BOX(window->reqplace_body), TRUE, "{}");
-    headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "{}");
+    headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "[]");
 
     res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, "");
     res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, "");
