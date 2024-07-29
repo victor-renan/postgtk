@@ -6,12 +6,53 @@
     <property name="default-height">560</property>
     <child>
       <object class="GtkPaned" id="reqpaned">
-        <property name="start-child">reqlist</property>
+        <property name="start-child">reqlist_box</property>
         <property name="end-child">reqplace</property>
         <property name="wide-handle">true</property>
         <property name="position">220</property>
         <child>
-          <object class="GtkListBox" id="reqlist" />
+          <object class="GtkBox" id="reqlist_box">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <property name="vexpand">false</property>
+                <property name="margin-top">4</property>
+                <property name="margin-bottom">4</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="label">Requests</property>
+                        <attributes>
+                          <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+                        </attributes>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">true</property>
+                        <property name="halign">2</property>
+                        <child>
+                          <object class="GtkButton">
+                            <property name="icon-name">list-add</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator" />
+            </child>
+            <child>
+              <object class="GtkListBox" id="reqlist" />
+            </child>
+          </object>
         </child>
         <child>
           <object class="GtkBox" id="reqplace">
@@ -70,7 +111,7 @@
                               <object class="GtkStringList">
                                 <items>
                                   <item>JSON</item>
-                                  <item>FormData</item>
+                                  <item>Form Data</item>
                                 </items>
                               </object>
                             </property>
