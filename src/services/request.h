@@ -22,6 +22,7 @@ typedef struct {
 
 typedef struct {
     uint method;
+    uint body_type;
     char *url;
     char *body;
     char *headers;

@@ -53,8 +53,31 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkStackSwitcher" id="reqplace_switcher">
-                    <property name="stack">reqplace_stack</property>
+                  <object class="GtkBox">
+                    <child>
+                      <object class="GtkStackSwitcher" id="reqplace_switcher">
+                        <property name="stack">reqplace_stack</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">true</property>
+                        <property name="halign">0</property>
+                        <child>
+                          <object class="GtkDropDown" id="reqplace_body_types">
+                            <property name="width-request">120</property>
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item>JSON</item>
+                                  <item>FormData</item>
+                                </items>
+                              </object>
+                            </property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>
                 <child>

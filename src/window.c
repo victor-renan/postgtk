@@ -8,16 +8,13 @@
 
 struct _MainWindow {
     GtkApplicationWindow parent;
-
     GtkWidget *reqlist;
-
     GtkWidget *reqplace;
     GtkWidget *reqplace_methods;
     GtkWidget *reqplace_body;
     GtkWidget *reqplace_headers;
     GtkWidget *reqplace_url;
     GtkWidget *reqplace_submit;
-
     GtkWidget *resplace_switcher;
     GtkWidget *resplace_stack;
     GtkWidget *resplace_preview;
@@ -26,17 +23,19 @@ struct _MainWindow {
     GtkWidget *resplace_size;
     GtkWidget *resplace_time;
     GtkWidget *resplace_status;
+    GtkWidget *reqplace_body_types;
 };
 
 G_DEFINE_TYPE(MainWindow, main_window, GTK_TYPE_APPLICATION_WINDOW);
 
-
-static void main_window_init(MainWindow *window)
+static void
+main_window_init(MainWindow *window)
 {
     gtk_widget_init_template(GTK_WIDGET(window));
 }
 
-static void main_window_class_init(MainWindowClass *class)
+static void
+main_window_class_init(MainWindowClass *class)
 {
     gtk_widget_class_set_template_from_resource(GTK_WIDGET_CLASS(class), "/org/postgtk/window.ui");
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqlist);
@@ -54,14 +53,17 @@ static void main_window_class_init(MainWindowClass *class)
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_size);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_time);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, resplace_status);
+    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqplace_body_types);
 }
 
-MainWindow *main_window_new(MainApp *app)
+MainWindow
+*main_window_new(MainApp *app)
 {
     return g_object_new(MAIN_WINDOW_TYPE, "application", app, NULL);
 }
 
-GtkTextView *ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content)
+GtkTextView
+*ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content)
 {
     GtkWidget *scroller, *textview;
     GtkTextBuffer *buffer;
@@ -70,7 +72,6 @@ GtkTextView *ui_add_reqplace_textview(GtkBox *box, bool editable, gchar *content
     textview = gtk_text_view_new();
 
     buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
-
     gtk_text_buffer_set_text(buffer, content, -1);
 
     gtk_text_view_set_top_margin(GTK_TEXT_VIEW(textview), 8);
@@ -103,16 +104,16 @@ typedef struct RequestForm {
     GtkLabel *res_size;
     GtkLabel *res_time;
     GtkLabel *res_status;
+    GtkDropDown *body_type;
 } RequestForm;
 
-void send_request(GtkWidget *widget, RequestForm *form)
+void
+send_request(GtkWidget *widget, RequestForm *form)
 {
-    gtk_widget_set_sensitive(form->res_switcher, TRUE);
-    gtk_widget_set_visible(form->res_stack, TRUE);
-
     Request req;
 
     uint method = (uint) gtk_drop_down_get_selected(form->method);
+    uint body_type = (uint) gtk_drop_down_get_selected(form->body_type);
     char *url = (char*) gtk_entry_buffer_get_text(gtk_entry_get_buffer(form->url));
 
     GtkTextBuffer *body_buf, *header_buf;
@@ -127,13 +128,11 @@ void send_request(GtkWidget *widget, RequestForm *form)
     char *body = gtk_text_buffer_get_text(body_buf, &bl, &br, FALSE);
     char *headers = gtk_text_buffer_get_text(header_buf, &hl, &hr, FALSE);
 
-    strcat(body, "\n");
-    strcat(headers, "\n");
-
     req.method = method;
     req.url = url;
     req.body = body;
     req.headers = headers;
+    req.body_type = body_type;
 
     Response res = perform_request(req);
 
@@ -146,7 +145,8 @@ void send_request(GtkWidget *widget, RequestForm *form)
     gtk_label_set_text(form->res_status, g_strdup_printf("Code %ld", res.status));
 }
 
-void main_window_open(MainWindow *window, GFile *file)
+void
+main_window_open(MainWindow *window, GFile *file)
 {
     GtkTextView
     *body,
@@ -155,26 +155,23 @@ void main_window_open(MainWindow *window, GFile *file)
     *res_headers,
     *res_cookies;
 
-    GtkLabel *res_size, *res_time, *res_status;
-
     body = ui_add_reqplace_textview(GTK_BOX(window->reqplace_body), TRUE, "{}");
     headers = ui_add_reqplace_textview(GTK_BOX(window->reqplace_headers), TRUE, "{}");
+    res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, "No Preview");
+    res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, "No Headers");
+    res_cookies = ui_add_reqplace_textview(GTK_BOX(window->resplace_cookies), FALSE, "No Cookies");
 
-    res_preview = ui_add_reqplace_textview(GTK_BOX(window->resplace_preview), FALSE, "");
-    res_headers = ui_add_reqplace_textview(GTK_BOX(window->resplace_headers), FALSE, "");
-    res_cookies = ui_add_reqplace_textview(GTK_BOX(window->resplace_cookies), FALSE, "");
+    GtkLabel *res_size, *res_time, *res_status;
 
     res_size = GTK_LABEL(window->resplace_size);
     res_time = GTK_LABEL(window->resplace_time);
     res_status = GTK_LABEL(window->resplace_status);
 
-    gtk_widget_set_sensitive(window->resplace_switcher, FALSE);
-    gtk_widget_set_visible(window->resplace_stack, FALSE);
-
     RequestForm *form = g_new(RequestForm, 1);
 
     form->reqplace = GTK_BOX(window->reqplace);
     form->method = GTK_DROP_DOWN(window->reqplace_methods);
+    form->body_type = GTK_DROP_DOWN(window->reqplace_body_types);
     form->url = GTK_ENTRY(window->reqplace_url);
     form->res_stack = window->resplace_stack;
     form->res_switcher = window->resplace_switcher;
