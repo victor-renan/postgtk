@@ -1,10 +1,8 @@
 #include <gtk/gtk.h>
 
-#include "services/request.h"
-
+#include "request.h"
 #include "app.h"
 #include "window.h"
-
 
 struct _MainWindow {
     GtkApplicationWindow parent;
