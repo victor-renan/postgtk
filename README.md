@@ -1,6 +1,6 @@
 # PostGTK
 
-An simple and lightweight API Client built with C, GTK, and libcurl.
+A simple and lightweight API Client built with C, GTK, and libcurl.
 
 
 ## Requirements:
