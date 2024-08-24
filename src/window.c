@@ -6,7 +6,6 @@
 
 struct _MainWindow {
     GtkApplicationWindow parent;
-    GtkWidget *reqlist;
     GtkWidget *reqplace;
     GtkWidget *reqplace_methods;
     GtkWidget *reqplace_body;
@@ -36,7 +35,6 @@ static void
 main_window_class_init(MainWindowClass *class)
 {
     gtk_widget_class_set_template_from_resource(GTK_WIDGET_CLASS(class), "/org/postgtk/window.ui");
-    gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqlist);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqplace);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqplace_body);
     gtk_widget_class_bind_template_child(GTK_WIDGET_CLASS(class), MainWindow, reqplace_methods);
@@ -141,6 +139,12 @@ send_request(GtkWidget *widget, RequestForm *form)
     gtk_label_set_text(form->res_size, g_strdup_printf("%ldB", res.size));
     gtk_label_set_text(form->res_time, g_strdup_printf("%.2fms", res.time * 1000));
     gtk_label_set_text(form->res_status, g_strdup_printf("Code %ld", res.status));
+}
+
+void
+delete_request_item(GtkWidget *widget, GtkWidget *box)
+{
+    gtk_list_box_remove(GTK_LIST_BOX(box), gtk_widget_get_parent(widget));
 }
 
 void
